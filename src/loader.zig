@@ -3,6 +3,7 @@ const parser = @import("./parser.zig");
 const setenv = @import("./utils.zig").setenv;
 const toCString = @import("./utils.zig").toCString;
 const Error = @import("./error.zig").Error;
+const getenv = std.posix.getenv;
 
 const testing = std.testing;
 
@@ -263,7 +264,7 @@ test "test load" {
     try testing.expectEqualStrings(loader.envs().get("KEY8").?.?, "whitespace before =");
     try testing.expectEqualStrings(loader.envs().get("KEY9").?.?, "whitespace after =");
 
-    const r = std.os.getenv("KEY0");
+    const r = getenv("KEY0");
     try testing.expectEqualStrings(r.?, "0");
 }
 
@@ -297,7 +298,7 @@ test "test not override" {
     defer loader.deinit();
     try loader.loadFromStream(reader);
 
-    const r = std.os.getenv("HOME");
+    const r = getenv("HOME");
     try testing.expect(!std.mem.eql(u8, r.?, "/home/nayuta"));
 }
 
@@ -314,7 +315,7 @@ test "test override" {
     defer loader.deinit();
     try loader.loadFromStream(reader);
 
-    const r = std.os.getenv("HOME");
+    const r = getenv("HOME");
     try testing.expect(std.mem.eql(u8, r.?, "/home/nayuta"));
 }
 
